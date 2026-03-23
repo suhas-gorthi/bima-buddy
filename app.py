@@ -456,16 +456,16 @@ def render_recommendation_cards():
 
 
 INSURER_URLS = {
-    "star_comprehensive":    "https://www.starhealth.in",
-    "hdfc_optima_restore":   "https://www.hdfcergo.com/health-insurance",
-    "niva_bupa_reassure":    "https://www.nivabupa.com",
-    "care_supreme":          "https://www.careinsurance.com",
-    "aditya_birla_activ":    "https://healthinsurance.adityabirlacapital.com",
-    "hdfc_click2protect":    "https://www.hdfclife.com/term-insurance-plans",
-    "icici_iprotect":        "https://www.iciciprulife.com/term-life-insurance.html",
-    "max_life_smart_secure": "https://www.maxlifeinsurance.com/term-insurance-plans",
-    "tata_aia_sampurna":     "https://www.tataaia.com/term-insurance.html",
-    "lic_tech_term":         "https://licindia.in/home",
+    "star_comprehensive":    "https://www.starhealth.in/health-insurance/individual-health-insurance/comprehensive-insurance-policy",
+    "hdfc_optima_restore":   "https://www.hdfcergo.com/health-insurance/individual-health-insurance/optima-restore",
+    "niva_bupa_reassure":    "https://www.nivabupa.com/health-insurance-plans/reassure-2-0-individual-and-family-floater-plan.html",
+    "care_supreme":          "https://www.careinsurance.com/health-insurance-plans/care-supreme-health-insurance.html",
+    "aditya_birla_activ":    "https://healthinsurance.adityabirlacapital.com/health-insurance-plans/activ-health-platinum-plan",
+    "hdfc_click2protect":    "https://www.hdfclife.com/term-insurance-plans/click-2-protect-super-plan",
+    "icici_iprotect":        "https://www.iciciprulife.com/term-life-insurance/iprotect-smart-term-plan.html",
+    "max_life_smart_secure": "https://www.maxlifeinsurance.com/term-insurance-plans/smart-secure-plus-plan",
+    "tata_aia_sampurna":     "https://www.tataaia.com/life-insurance/term-plan/sampoorna-raksha-supreme.html",
+    "lic_tech_term":         "https://licindia.in/products/insurance-plan/term-assurance-plans/lic-s-tech-term",
 }
 
 
@@ -566,13 +566,17 @@ def render_buy_flow():
     if st.session_state.get("payment_ready") == plan["plan_id"]:
         insurer_url = INSURER_URLS.get(plan["plan_id"], "https://www.policybazaar.com")
         ref = f"BB-{plan['plan_id'].upper()[:8]}-2024"
-        st.success(f"🎉 Application complete! Your reference: **{ref}**")
+        st.success(f"🎉 Application complete! Your Bima Buddy reference: **{ref}**")
         st.balloons()
-        st.markdown(
-            f"Click below to complete your payment on the **{plan['insurer']}** website. "
-            f"Have your reference number **{ref}** ready.")
+        st.info(
+            f"You'll land directly on the **{plan['name']}** product page. "
+            f"Click **'Buy Now'** or **'Get Quote'** on that page to proceed to payment. "
+            f"Keep your reference **{ref}** handy — use it if you contact support.\n\n"
+            f"⚠️ *Note: The insurer's form will ask for the same details you've filled above — "
+            f"your answers are ready to copy across.*"
+        )
         st.link_button(
-            f"🔗 Go to {plan['insurer']} →",
+            f"🔗 Go to {plan['name']} — {plan['insurer']} →",
             url=insurer_url,
             type="primary",
             use_container_width=True,
