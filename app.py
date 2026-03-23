@@ -99,6 +99,7 @@ def init_state():
         "greeted": False,
         "api_key": os.getenv("ANTHROPIC_API_KEY", ""),
         "upload_key": 0,
+        "payment_ready": None,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -357,7 +358,8 @@ def render_sidebar():
     st.sidebar.divider()
     if st.sidebar.button("🔄 Start Over", use_container_width=True):
         for k in ["messages", "profile", "phase", "recommendations", "selected_plan_id",
-                  "prefill_data", "flags", "riders", "greeted", "profile_confidence", "upload_key"]:
+                  "prefill_data", "flags", "riders", "greeted", "profile_confidence",
+                  "upload_key", "payment_ready"]:
             st.session_state.pop(k, None)
         st.rerun()
 
@@ -453,6 +455,20 @@ def render_recommendation_cards():
         st.write("")
 
 
+INSURER_URLS = {
+    "star_comprehensive":    "https://www.starhealth.in",
+    "hdfc_optima_restore":   "https://www.hdfcergo.com/health-insurance",
+    "niva_bupa_reassure":    "https://www.nivabupa.com",
+    "care_supreme":          "https://www.careinsurance.com",
+    "aditya_birla_activ":    "https://healthinsurance.adityabirlacapital.com",
+    "hdfc_click2protect":    "https://www.hdfclife.com/term-insurance-plans",
+    "icici_iprotect":        "https://www.iciciprulife.com/term-life-insurance.html",
+    "max_life_smart_secure": "https://www.maxlifeinsurance.com/term-insurance-plans",
+    "tata_aia_sampurna":     "https://www.tataaia.com/term-insurance.html",
+    "lic_tech_term":         "https://licindia.in/home",
+}
+
+
 def render_buy_flow():
     if st.session_state.phase != "buying" or not st.session_state.selected_plan_id:
         return
@@ -536,15 +552,31 @@ def render_buy_flow():
             "I declare that all information provided is true and accurate. "
             "Non-disclosure may result in claim rejection or policy cancellation.")
 
-        if st.form_submit_button(
-                f"Proceed to Payment — ₹{plan['premium_monthly']:,}/month →",
-                type="primary", use_container_width=True, disabled=not agree):
-            st.success("🎉 Application received! Redirecting to complete payment…")
-            st.balloons()
-            st.info(
-                f"**Redirecting to {plan['insurer']} portal…**\n\n"
-                f"Bima Buddy ref: BB-{plan['plan_id'].upper()[:8]}-2024\n\n"
-                "Policy documents will be sent to your email within 24 hours.")
+        submitted = st.form_submit_button(
+            f"Proceed to Payment — ₹{plan['premium_monthly']:,}/month →",
+            type="primary", use_container_width=True)
+
+        if submitted:
+            if not agree:
+                st.error("⚠️ Please check the declaration box above before proceeding.")
+            else:
+                st.session_state["payment_ready"] = plan["plan_id"]
+
+    # ── Payment redirect (outside form so link_button renders properly) ────────
+    if st.session_state.get("payment_ready") == plan["plan_id"]:
+        insurer_url = INSURER_URLS.get(plan["plan_id"], "https://www.policybazaar.com")
+        ref = f"BB-{plan['plan_id'].upper()[:8]}-2024"
+        st.success(f"🎉 Application complete! Your reference: **{ref}**")
+        st.balloons()
+        st.markdown(
+            f"Click below to complete your payment on the **{plan['insurer']}** website. "
+            f"Have your reference number **{ref}** ready.")
+        st.link_button(
+            f"🔗 Go to {plan['insurer']} →",
+            url=insurer_url,
+            type="primary",
+            use_container_width=True,
+        )
 
 
 # ── Main chat ──────────────────────────────────────────────────────────────────
