@@ -1,0 +1,520 @@
+[
+  {
+    "plan_id": "star_comprehensive",
+    "name": "Star Health Comprehensive",
+    "insurer": "Star Health & Allied Insurance",
+    "type": "health",
+    "sum_insured_options": ["5L", "10L", "15L", "25L", "50L"],
+    "sum_insured_default": "10L",
+    "premium_monthly": 1150,
+    "premium_annual": 13800,
+    "premium_varies_by_age": {
+      "18-35": 950,
+      "36-45": 1350,
+      "46-55": 1900,
+      "56-65": 2800
+    },
+    "network_hospitals": 14000,
+    "network_cities": ["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad", "Jaipur", "Lucknow"],
+    "claim_settlement_ratio": 94.2,
+    "pre_existing_waiting_period_years": 4,
+    "pre_existing_covered_after": "4 years",
+    "key_features": [
+      "No room rent sub-limits",
+      "Restoration benefit (100% of SI)",
+      "Daycare procedures covered (541+)",
+      "No co-payment below 60 years",
+      "Alternative treatments (AYUSH) covered",
+      "Annual health check-up included",
+      "Domiciliary hospitalization covered"
+    ],
+    "exclusions": [
+      "Cosmetic surgery",
+      "Self-inflicted injuries",
+      "War & nuclear risks",
+      "Dental treatment (unless accident)",
+      "Experimental treatments"
+    ],
+    "riders_available": [
+      {"name": "Critical Illness Rider", "monthly_cost": 250, "benefit": "Lump sum on 30+ critical illnesses"},
+      {"name": "Personal Accident Rider", "monthly_cost": 150, "benefit": "Accidental death & disability"},
+      {"name": "Super Top-Up", "monthly_cost": 400, "benefit": "Additional ₹10L coverage after deductible"}
+    ],
+    "copay": "None below 60 yrs; 10% above 60 yrs",
+    "best_for": "Families aged 25-50 in metro cities wanting comprehensive coverage with high CSR",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 4,
+    "score_factors": {
+      "family_friendly": 9,
+      "pre_existing_coverage": 7,
+      "affordability": 8,
+      "network_size": 10,
+      "csr": 9
+    }
+  },
+  {
+    "plan_id": "hdfc_optima_restore",
+    "name": "HDFC Ergo Optima Restore",
+    "insurer": "HDFC ERGO General Insurance",
+    "type": "health",
+    "sum_insured_options": ["3L", "5L", "10L", "15L", "25L", "50L"],
+    "sum_insured_default": "10L",
+    "premium_monthly": 1050,
+    "premium_annual": 12600,
+    "premium_varies_by_age": {
+      "18-35": 875,
+      "36-45": 1250,
+      "46-55": 1800,
+      "56-65": 2600
+    },
+    "network_hospitals": 13000,
+    "network_cities": ["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad", "Chandigarh", "Bhopal"],
+    "claim_settlement_ratio": 98.0,
+    "pre_existing_waiting_period_years": 3,
+    "pre_existing_covered_after": "3 years",
+    "key_features": [
+      "Restore benefit - replenishes SI if exhausted within policy year",
+      "No claim bonus - 50% increase per claim-free year (max 100%)",
+      "Stay active bonus for fitness",
+      "E-opinion for critical illness",
+      "Psychiatric treatment covered",
+      "Inflation protect - automatic SI increase",
+      "Ambulance cover up to ₹2,000"
+    ],
+    "exclusions": [
+      "HIV/AIDS",
+      "Infertility treatment",
+      "Obesity surgery",
+      "Hazardous sports injuries",
+      "Pre-existing diseases (3-yr waiting)"
+    ],
+    "riders_available": [
+      {"name": "Critical Illness Plus", "monthly_cost": 300, "benefit": "Covers 15 critical illnesses with lump sum"},
+      {"name": "Maternity Benefit", "monthly_cost": 450, "benefit": "Maternity & newborn expenses"},
+      {"name": "OPD Cover", "monthly_cost": 200, "benefit": "Outpatient consultation & pharmacy"}
+    ],
+    "copay": "None; optional 20% co-pay for lower premium",
+    "best_for": "Individuals 25-45 who want the best claim settlement ratio and restore feature",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 3,
+    "score_factors": {
+      "family_friendly": 8,
+      "pre_existing_coverage": 8,
+      "affordability": 8,
+      "network_size": 9,
+      "csr": 10
+    }
+  },
+  {
+    "plan_id": "niva_bupa_reassure",
+    "name": "Niva Bupa ReAssure 2.0",
+    "insurer": "Niva Bupa Health Insurance",
+    "type": "health",
+    "sum_insured_options": ["5L", "10L", "15L", "30L", "50L", "1Cr"],
+    "sum_insured_default": "15L",
+    "premium_monthly": 1380,
+    "premium_annual": 16560,
+    "premium_varies_by_age": {
+      "18-35": 1150,
+      "36-45": 1600,
+      "46-55": 2200,
+      "56-65": 3100
+    },
+    "network_hospitals": 10000,
+    "network_cities": ["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Kochi", "Coimbatore"],
+    "claim_settlement_ratio": 91.0,
+    "pre_existing_waiting_period_years": 4,
+    "pre_existing_covered_after": "4 years",
+    "key_features": [
+      "Lock-in at entry age (premium doesn't rise with age after entry)",
+      "Booster+ - unused SI carries forward up to 3x base SI",
+      "ReAssure - unlimited reinstatements of base SI",
+      "Room rent: Single private AC room",
+      "Mental health hospitalization covered",
+      "International emergency cover"
+    ],
+    "exclusions": [
+      "Pre-existing diseases (4-yr waiting)",
+      "Maternity (optional add-on)",
+      "Genetic disorders",
+      "Hearing aids",
+      "Unani/Siddha treatments"
+    ],
+    "riders_available": [
+      {"name": "Maternity & Newborn Care", "monthly_cost": 600, "benefit": "Normal ₹60K, C-section ₹80K; newborn covered from day 1"},
+      {"name": "Critical Illness", "monthly_cost": 350, "benefit": "₹10L lump sum on major illness diagnosis"},
+      {"name": "Personal Accident", "monthly_cost": 180, "benefit": "Death/disability cover up to ₹25L"}
+    ],
+    "copay": "None; co-pay applies if admitted in non-network hospital",
+    "best_for": "Young professionals and families wanting premium coverage with lock-in pricing",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 4,
+    "score_factors": {
+      "family_friendly": 9,
+      "pre_existing_coverage": 7,
+      "affordability": 7,
+      "network_size": 8,
+      "csr": 8
+    }
+  },
+  {
+    "plan_id": "care_supreme",
+    "name": "Care Supreme",
+    "insurer": "Care Health Insurance",
+    "type": "health",
+    "sum_insured_options": ["5L", "7L", "10L", "15L", "25L", "50L", "1Cr", "6Cr"],
+    "sum_insured_default": "10L",
+    "premium_monthly": 980,
+    "premium_annual": 11760,
+    "premium_varies_by_age": {
+      "18-35": 820,
+      "36-45": 1100,
+      "46-55": 1600,
+      "56-65": 2400
+    },
+    "network_hospitals": 19000,
+    "network_cities": ["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad", "Surat", "Nagpur", "Indore", "Bhopal"],
+    "claim_settlement_ratio": 95.2,
+    "pre_existing_waiting_period_years": 4,
+    "pre_existing_covered_after": "4 years",
+    "key_features": [
+      "Largest hospital network in India (19,000+)",
+      "No room rent sub-limit (base plan)",
+      "Unlimited restoration of SI",
+      "Annual health check-up for all members",
+      "Domiciliary treatment covered",
+      "Air ambulance covered up to ₹5L",
+      "Smart Select - choose your own deductible for lower premium"
+    ],
+    "exclusions": [
+      "Cosmetic procedures",
+      "Intentional self-harm",
+      "Alcohol/substance-related illness",
+      "Experimental treatments",
+      "Pre-existing (4-yr waiting)"
+    ],
+    "riders_available": [
+      {"name": "Care Plus - OPD", "monthly_cost": 250, "benefit": "Unlimited OPD including pharmacy"},
+      {"name": "NCB Super", "monthly_cost": 200, "benefit": "50% SI boost per claim-free year (max 200%)"},
+      {"name": "Global Cover", "monthly_cost": 800, "benefit": "Emergency medical cover worldwide"}
+    ],
+    "copay": "None for below 60; 20% above 60 (waivable)",
+    "best_for": "Tier-2/3 city residents and people wanting maximum hospital network coverage",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 2,
+    "score_factors": {
+      "family_friendly": 9,
+      "pre_existing_coverage": 7,
+      "affordability": 9,
+      "network_size": 10,
+      "csr": 9
+    }
+  },
+  {
+    "plan_id": "aditya_birla_activ",
+    "name": "Aditya Birla Activ Health Platinum Enhanced",
+    "insurer": "Aditya Birla Health Insurance",
+    "type": "health",
+    "sum_insured_options": ["5L", "10L", "15L", "25L", "50L", "1Cr", "2Cr"],
+    "sum_insured_default": "10L",
+    "premium_monthly": 1500,
+    "premium_annual": 18000,
+    "premium_varies_by_age": {
+      "18-35": 1200,
+      "36-45": 1700,
+      "46-55": 2400,
+      "56-65": 3500
+    },
+    "network_hospitals": 10000,
+    "network_cities": ["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad"],
+    "claim_settlement_ratio": 94.0,
+    "pre_existing_waiting_period_years": 3,
+    "pre_existing_covered_after": "3 years",
+    "key_features": [
+      "HealthReturns - earn cashback for staying healthy (up to 30% premium back)",
+      "Chronic disease management - diabetes, hypertension covered from day 1",
+      "Chronic condition management program",
+      "No limit on room rent",
+      "Second opinion from top doctors",
+      "Mental wellness support - 24/7 counseling",
+      "Maternity cover with 30-day newborn cover"
+    ],
+    "exclusions": [
+      "Self-inflicted injuries",
+      "War risks",
+      "HIV/AIDS (unless blood transfusion)",
+      "Nuclear/biological risks",
+      "Aesthetic surgery"
+    ],
+    "riders_available": [
+      {"name": "Critical Illness Premier", "monthly_cost": 400, "benefit": "64 critical illnesses, lump sum payout"},
+      {"name": "Hospital Daily Cash", "monthly_cost": 150, "benefit": "₹1,000/day for hospital stay"},
+      {"name": "Personal Accident Premier", "monthly_cost": 200, "benefit": "Accident death & disability coverage"}
+    ],
+    "copay": "None; optional 10% co-pay for better premium",
+    "best_for": "Health-conscious individuals, diabetics, or those with manageable chronic conditions",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 4,
+    "score_factors": {
+      "family_friendly": 8,
+      "pre_existing_coverage": 10,
+      "affordability": 6,
+      "network_size": 8,
+      "csr": 9
+    }
+  },
+  {
+    "plan_id": "hdfc_click2protect",
+    "name": "HDFC Life Click 2 Protect Super",
+    "insurer": "HDFC Life Insurance",
+    "type": "term",
+    "sum_insured_options": ["25L", "50L", "1Cr", "2Cr", "5Cr", "10Cr"],
+    "sum_insured_default": "1Cr",
+    "premium_monthly": 950,
+    "premium_annual": 11400,
+    "premium_varies_by_age": {
+      "18-30": 650,
+      "31-40": 950,
+      "41-50": 1600,
+      "51-60": 2800
+    },
+    "network_hospitals": 0,
+    "network_cities": ["All India"],
+    "claim_settlement_ratio": 99.5,
+    "pre_existing_waiting_period_years": 0,
+    "key_features": [
+      "Life & CI (Critical Illness) combo option",
+      "Return of premium option available",
+      "Increasing cover - SI grows with inflation",
+      "Terminal illness benefit",
+      "Waiver of premium on disability",
+      "Accidental death benefit (2x payout)",
+      "Child education benefit add-on"
+    ],
+    "exclusions": [
+      "Suicide within first year",
+      "Death due to undisclosed pre-existing condition",
+      "Criminal activity",
+      "Self-inflicted harm"
+    ],
+    "riders_available": [
+      {"name": "Critical Illness & Disability Rider", "monthly_cost": 350, "benefit": "Lump sum on 60+ critical illnesses or disability"},
+      {"name": "Income Benefit Rider", "monthly_cost": 200, "benefit": "Monthly income to family for 10 years after claim"},
+      {"name": "Accidental Death Benefit", "monthly_cost": 100, "benefit": "Additional ₹1Cr on accidental death"}
+    ],
+    "copay": "N/A (term insurance)",
+    "best_for": "Primary earners aged 25-45 who want India's highest claim settlement ratio for family protection",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 0,
+    "score_factors": {
+      "family_friendly": 10,
+      "pre_existing_coverage": 8,
+      "affordability": 9,
+      "network_size": 10,
+      "csr": 10
+    }
+  },
+  {
+    "plan_id": "icici_iprotect",
+    "name": "ICICI Pru iProtect Smart",
+    "insurer": "ICICI Prudential Life Insurance",
+    "type": "term",
+    "sum_insured_options": ["50L", "1Cr", "2Cr", "5Cr", "10Cr"],
+    "sum_insured_default": "1Cr",
+    "premium_monthly": 880,
+    "premium_annual": 10560,
+    "premium_varies_by_age": {
+      "18-30": 600,
+      "31-40": 880,
+      "41-50": 1500,
+      "51-60": 2600
+    },
+    "network_hospitals": 0,
+    "network_cities": ["All India"],
+    "claim_settlement_ratio": 97.8,
+    "pre_existing_waiting_period_years": 0,
+    "key_features": [
+      "4 plan variants: Life, Life + Health, Life + Income, All-in-One",
+      "Critical illness: 34 illnesses covered",
+      "Terminal illness: early payout",
+      "Permanent disability: future premiums waived",
+      "Spouse can be added at policy anniversary",
+      "Premium holiday if financial hardship",
+      "Whole life option available"
+    ],
+    "exclusions": [
+      "Suicide (first year)",
+      "Fraud/misrepresentation",
+      "War/terrorism",
+      "Undisclosed medical conditions"
+    ],
+    "riders_available": [
+      {"name": "Critical Illness Rider", "monthly_cost": 300, "benefit": "34 illnesses, lump sum payout"},
+      {"name": "Accidental Death & Disability", "monthly_cost": 120, "benefit": "Up to 2x base SI on accidental death"},
+      {"name": "Waiver of Premium", "monthly_cost": 80, "benefit": "Future premiums waived on disability"}
+    ],
+    "copay": "N/A (term insurance)",
+    "best_for": "Budget-conscious individuals wanting comprehensive term cover with CI options",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 0,
+    "score_factors": {
+      "family_friendly": 10,
+      "pre_existing_coverage": 8,
+      "affordability": 9,
+      "network_size": 10,
+      "csr": 9
+    }
+  },
+  {
+    "plan_id": "max_life_smart_secure",
+    "name": "Max Life Smart Secure Plus",
+    "insurer": "Max Life Insurance",
+    "type": "term",
+    "sum_insured_options": ["25L", "50L", "1Cr", "2Cr", "5Cr", "10Cr"],
+    "sum_insured_default": "1Cr",
+    "premium_monthly": 1020,
+    "premium_annual": 12240,
+    "premium_varies_by_age": {
+      "18-30": 720,
+      "31-40": 1020,
+      "41-50": 1750,
+      "51-60": 3000
+    },
+    "network_hospitals": 0,
+    "network_cities": ["All India"],
+    "claim_settlement_ratio": 99.5,
+    "pre_existing_waiting_period_years": 0,
+    "key_features": [
+      "Joint life cover (self + spouse in one policy)",
+      "Special exit benefit - exit at 60 with premium back",
+      "Step-up benefit - SI increases 5% per year",
+      "Terminal illness advance payout",
+      "COVID-19 death cover",
+      "Return of premium at maturity option",
+      "No medical test up to age 35 for ₹50L SI"
+    ],
+    "exclusions": [
+      "Suicide within 12 months",
+      "Adventure sports death",
+      "Terrorist activities",
+      "Undisclosed pre-existing conditions"
+    ],
+    "riders_available": [
+      {"name": "Critical Illness & Disability Rider", "monthly_cost": 380, "benefit": "40 critical illnesses, ongoing income on disability"},
+      {"name": "Accidental Death Benefit", "monthly_cost": 110, "benefit": "Additional payout on accidental death"},
+      {"name": "Waiver of Premium on CI", "monthly_cost": 90, "benefit": "Premiums waived on critical illness diagnosis"}
+    ],
+    "copay": "N/A (term insurance)",
+    "best_for": "Couples who want joint coverage and step-up benefits as responsibilities grow",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 0,
+    "score_factors": {
+      "family_friendly": 10,
+      "pre_existing_coverage": 8,
+      "affordability": 8,
+      "network_size": 10,
+      "csr": 10
+    }
+  },
+  {
+    "plan_id": "tata_aia_sampurna",
+    "name": "Tata AIA SampurnaRaksha Supreme",
+    "insurer": "Tata AIA Life Insurance",
+    "type": "term",
+    "sum_insured_options": ["50L", "1Cr", "2Cr", "5Cr", "10Cr"],
+    "sum_insured_default": "1Cr",
+    "premium_monthly": 920,
+    "premium_annual": 11040,
+    "premium_varies_by_age": {
+      "18-30": 680,
+      "31-40": 920,
+      "41-50": 1580,
+      "51-60": 2700
+    },
+    "network_hospitals": 0,
+    "network_cities": ["All India"],
+    "claim_settlement_ratio": 98.5,
+    "pre_existing_waiting_period_years": 0,
+    "key_features": [
+      "Wellness benefit - premium discount for healthy lifestyle",
+      "5 coverage options including income payout",
+      "Better Half Benefit - spouse gets 50% SI on policyholder's death",
+      "Accidental total permanent disability cover",
+      "Terminal illness payout - 25% advance",
+      "Loyalty additions every 5 years"
+    ],
+    "exclusions": [
+      "Death by suicide (year 1)",
+      "Criminal activities",
+      "Narcotics/drug-related death",
+      "War or civil unrest"
+    ],
+    "riders_available": [
+      {"name": "Critical Illness Rider", "monthly_cost": 320, "benefit": "35 critical illnesses covered"},
+      {"name": "Hospital Care Rider", "monthly_cost": 180, "benefit": "Daily hospital cash + ICU benefit"},
+      {"name": "Accidental Death & Dismemberment", "monthly_cost": 130, "benefit": "Enhanced cover for accidents"}
+    ],
+    "copay": "N/A (term insurance)",
+    "best_for": "Young professionals wanting affordable term cover with wellness incentives",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 0,
+    "score_factors": {
+      "family_friendly": 9,
+      "pre_existing_coverage": 8,
+      "affordability": 9,
+      "network_size": 10,
+      "csr": 9
+    }
+  },
+  {
+    "plan_id": "lic_tech_term",
+    "name": "LIC Tech Term Plan",
+    "insurer": "Life Insurance Corporation of India",
+    "type": "term",
+    "sum_insured_options": ["50L", "1Cr", "2Cr", "5Cr"],
+    "sum_insured_default": "1Cr",
+    "premium_monthly": 1100,
+    "premium_annual": 13200,
+    "premium_varies_by_age": {
+      "18-30": 800,
+      "31-40": 1100,
+      "41-50": 1900,
+      "51-60": 3400
+    },
+    "network_hospitals": 0,
+    "network_cities": ["All India"],
+    "claim_settlement_ratio": 98.6,
+    "pre_existing_waiting_period_years": 0,
+    "key_features": [
+      "Government-backed insurer - highest trust in India",
+      "Increasing cover option (level/increasing)",
+      "Return of premium variant available",
+      "Accidental benefit add-on",
+      "Smoker/non-smoker differentiated premium",
+      "Online purchase with minimal documentation",
+      "Waiver of premium disability rider"
+    ],
+    "exclusions": [
+      "Suicide (first year)",
+      "Death by hazardous sport (without rider)",
+      "Material misrepresentation",
+      "War-related death"
+    ],
+    "riders_available": [
+      {"name": "Accidental Death Benefit Rider", "monthly_cost": 140, "benefit": "Double sum assured on accidental death"},
+      {"name": "Accidental Disability Benefit Rider", "monthly_cost": 100, "benefit": "Premium waiver + income on disability"},
+      {"name": "Critical Illness Benefit Rider", "monthly_cost": 280, "benefit": "15 critical illnesses covered"}
+    ],
+    "copay": "N/A (term insurance)",
+    "best_for": "Conservative buyers who trust government-backed insurance and want reliable claim settlement",
+    "irdai_registered": true,
+    "cashless_claim_time_hours": 0,
+    "score_factors": {
+      "family_friendly": 9,
+      "pre_existing_coverage": 7,
+      "affordability": 8,
+      "network_size": 10,
+      "csr": 9
+    }
+  }
+]
