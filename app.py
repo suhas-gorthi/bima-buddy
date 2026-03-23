@@ -99,7 +99,10 @@ def init_state():
         "greeted": False,
         "api_key": os.getenv("ANTHROPIC_API_KEY", ""),
         "upload_key": 0,
-        "payment_ready": None,
+        "payment_step": "application",
+        "payment_policy_no": None,
+        "payment_method_used": None,
+        "payment_amount": None,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -359,7 +362,8 @@ def render_sidebar():
     if st.sidebar.button("🔄 Start Over", use_container_width=True):
         for k in ["messages", "profile", "phase", "recommendations", "selected_plan_id",
                   "prefill_data", "flags", "riders", "greeted", "profile_confidence",
-                  "upload_key", "payment_ready"]:
+                  "upload_key", "payment_step", "payment_policy_no",
+                  "payment_method_used", "payment_amount"]:
             st.session_state.pop(k, None)
         st.rerun()
 
@@ -455,20 +459,6 @@ def render_recommendation_cards():
         st.write("")
 
 
-INSURER_URLS = {
-    "star_comprehensive":    "https://www.starhealth.in/health-insurance/individual-health-insurance/comprehensive-insurance-policy",
-    "hdfc_optima_restore":   "https://www.hdfcergo.com/health-insurance/individual-health-insurance/optima-restore",
-    "niva_bupa_reassure":    "https://www.nivabupa.com/health-insurance-plans/reassure-2-0-individual-and-family-floater-plan.html",
-    "care_supreme":          "https://www.careinsurance.com/health-insurance-plans/care-supreme-health-insurance.html",
-    "aditya_birla_activ":    "https://healthinsurance.adityabirlacapital.com/health-insurance-plans/activ-health-platinum-plan",
-    "hdfc_click2protect":    "https://www.hdfclife.com/term-insurance-plans/click-2-protect-super-plan",
-    "icici_iprotect":        "https://www.iciciprulife.com/term-life-insurance/iprotect-smart-term-plan.html",
-    "max_life_smart_secure": "https://www.maxlifeinsurance.com/term-insurance-plans/smart-secure-plus-plan",
-    "tata_aia_sampurna":     "https://www.tataaia.com/life-insurance/term-plan/sampoorna-raksha-supreme.html",
-    "lic_tech_term":         "https://licindia.in/products/insurance-plan/term-assurance-plans/lic-s-tech-term",
-}
-
-
 def render_buy_flow():
     if st.session_state.phase != "buying" or not st.session_state.selected_plan_id:
         return
@@ -477,110 +467,339 @@ def render_buy_flow():
     if not plan:
         return
 
+    step = st.session_state.get("payment_step", "application")
+
+    # ── Step 1: Application form ───────────────────────────────────────────────
+    if step == "application":
+        st.markdown("---")
+        st.subheader(f"🛒 Application — {plan['name']}")
+        st.caption(plan["insurer"])
+        st.markdown(
+            '<div class="trust-badge">✅ A licensed advisor has reviewed this recommendation</div>',
+            unsafe_allow_html=True)
+        st.write("")
+
+        prefill = st.session_state.prefill_data
+        flags   = st.session_state.flags
+        riders  = st.session_state.riders
+
+        if flags:
+            st.markdown("#### ⚠️ Answer These Carefully")
+            for flag in flags:
+                lvl  = flag.get("level", "green")
+                icon = "🔴" if lvl == "red" else "🟡" if lvl == "yellow" else "🟢"
+                st.markdown(
+                    f'<div class="flag-{lvl}">{icon} <strong>{flag.get("field","").replace("_"," ").title()}</strong>'
+                    f'<br><small>{flag.get("guidance","")}</small></div>',
+                    unsafe_allow_html=True)
+
+        if riders:
+            st.markdown("#### 💊 Recommended Riders")
+            cols = st.columns(len(riders))
+            for i, rider in enumerate(riders):
+                cost = rider.get("monthly_cost", "")
+                cost_str = f"₹{cost:,}/mo" if isinstance(cost, (int, float)) else str(cost)
+                with cols[i]:
+                    st.info(f"**{rider.get('name','')}**\n\n{cost_str}\n\n{rider.get('why','')}")
+
+        with st.form("insurance_application_form"):
+            st.markdown("**Personal Details**")
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                st.text_input("Full Name *", value=prefill.get("full_name") or "")
+                st.text_input("Age *", value=str(prefill.get("age") or ""))
+                st.text_input("City *", value=prefill.get("city") or "")
+            with c2:
+                gender_idx = 1 if (prefill.get("gender") or "").lower().startswith("f") else 0
+                st.selectbox("Gender *", ["Male", "Female", "Other"], index=gender_idx)
+                st.text_input("Occupation *", value=prefill.get("occupation") or "")
+                st.text_input("Annual Income (₹) *", value=prefill.get("annual_income") or "")
+            with c3:
+                st.text_input("Mobile Number *", placeholder="10-digit mobile")
+                st.text_input("Email Address *", placeholder="your@email.com")
+                st.text_input("PAN Number", placeholder="ABCDE1234F")
+
+            st.markdown("**Health Declaration**")
+            h1, h2 = st.columns(2)
+            with h1:
+                st.radio("Tobacco/Smoking use?", ["No", "Yes", "Quit > 12 months ago"])
+                st.radio("Hospitalized in last 3 years?", ["No", "Yes"])
+            with h2:
+                st.radio("Ever had an insurance application rejected?", ["No", "Yes"])
+                st.radio("Hazardous occupation?", ["No", "Yes"])
+
+            st.text_area(
+                "Pre-existing Conditions (declare ALL truthfully) *",
+                value=prefill.get("existing_conditions") or "",
+                placeholder="e.g. Type 2 Diabetes diagnosed 2018, on Metformin. OR: None",
+                help="🔴 Non-disclosure is the #1 cause of claim rejection.", height=90)
+
+            st.markdown("**Nominee Details**")
+            n1, n2 = st.columns(2)
+            with n1:
+                st.text_input("Nominee Full Name *")
+            with n2:
+                st.selectbox("Relationship *", ["Spouse", "Parent", "Child", "Sibling", "Other"])
+
+            st.markdown(f"**Selected:** {plan['name']} · ₹{plan['premium_monthly']:,}/month")
+            agree = st.checkbox(
+                "I declare that all information provided is true and accurate. "
+                "Non-disclosure may result in claim rejection or policy cancellation.")
+
+            submitted = st.form_submit_button(
+                f"Proceed to Payment — ₹{plan['premium_monthly']:,}/month →",
+                type="primary", use_container_width=True)
+
+            if submitted:
+                if not agree:
+                    st.error("⚠️ Please check the declaration box above before proceeding.")
+                else:
+                    st.session_state["payment_step"] = "payment"
+                    st.rerun()
+
+    # ── Step 2: Payment page ───────────────────────────────────────────────────
+    elif step == "payment":
+        render_payment_page(plan)
+
+    # ── Step 3: Success screen ─────────────────────────────────────────────────
+    elif step == "success":
+        render_payment_success(plan)
+
+
+def render_payment_page(plan: dict):
+    import random
+    base   = plan["premium_monthly"]
+    gst    = round(base * 0.18)
+    total  = base + gst
+    annual = total * 12
+
     st.markdown("---")
-    st.subheader(f"🛒 Application — {plan['name']}")
-    st.caption(plan["insurer"])
-    st.markdown(
-        '<div class="trust-badge">✅ A licensed advisor has reviewed this recommendation</div>',
-        unsafe_allow_html=True)
+    st.markdown("## 💳 Complete Payment")
+
+    # Progress stepper
+    st.markdown("""
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:0.85rem;">
+        <span style="background:#27ae60;color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-weight:700">✓</span>
+        <span style="color:#27ae60;font-weight:600">Profile</span>
+        <span style="flex:1;height:2px;background:#27ae60;"></span>
+        <span style="background:#27ae60;color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-weight:700">✓</span>
+        <span style="color:#27ae60;font-weight:600">Application</span>
+        <span style="flex:1;height:2px;background:#1a7abf;"></span>
+        <span style="background:#1a7abf;color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-weight:700">3</span>
+        <span style="color:#1a7abf;font-weight:600">Payment</span>
+        <span style="flex:1;height:2px;background:#ccc;"></span>
+        <span style="background:#ccc;color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-weight:700">4</span>
+        <span style="color:#aaa">Policy Issued</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    left, right = st.columns([1, 1], gap="large")
+
+    # Order summary
+    with left:
+        st.markdown("#### 🧾 Order Summary")
+        st.markdown(f"""
+        <div style="background:#f8fafc;border:1px solid #e0e7ef;border-radius:10px;padding:18px;color:#1a2a3a;">
+            <div style="font-weight:700;font-size:1.05rem;margin-bottom:12px">{plan['name']}</div>
+            <div style="font-size:0.85rem;color:#555;margin-bottom:12px">{plan['insurer']}</div>
+            <hr style="border:none;border-top:1px solid #e0e7ef;margin:10px 0">
+            <div style="display:flex;justify-content:space-between;margin:6px 0;font-size:0.9rem;">
+                <span>Base Premium</span><span>₹{base:,}/month</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin:6px 0;font-size:0.9rem;">
+                <span>GST (18%)</span><span>₹{gst:,}/month</span>
+            </div>
+            <hr style="border:none;border-top:1px solid #e0e7ef;margin:10px 0">
+            <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;">
+                <span>Total Monthly</span><span style="color:#1a7abf">₹{total:,}/month</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:0.85rem;color:#555;">
+                <span>Annual Premium</span><span>₹{annual:,}/year</span>
+            </div>
+            <hr style="border:none;border-top:1px solid #e0e7ef;margin:10px 0">
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;">
+                <span>Sum Insured</span><span style="font-weight:600">{plan.get('sum_insured_default','—')}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-top:6px;">
+                <span>Policy Term</span><span style="font-weight:600">1 Year (Renewable)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-top:6px;">
+                <span>Claim Settlement</span><span style="font-weight:600;color:#27ae60">{plan.get('claim_settlement_ratio','—')}%</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(
+            '<div style="margin-top:10px;font-size:0.8rem;color:#888;">🔒 256-bit SSL encrypted · IRDAI Registered · PCI-DSS Compliant</div>',
+            unsafe_allow_html=True)
+
+    # Payment form
+    with right:
+        st.markdown("#### 💰 Select Payment Method")
+        method = st.radio(
+            "Payment method",
+            ["📱 UPI", "💳 Debit / Credit Card", "🏦 Net Banking"],
+            label_visibility="collapsed",
+            horizontal=True,
+            key="payment_method_select",
+        )
+
+        st.write("")
+
+        if method == "📱 UPI":
+            with st.form("upi_form"):
+                st.markdown("**Enter your UPI ID**")
+                upi_id = st.text_input(
+                    "UPI ID", placeholder="yourname@upi",
+                    label_visibility="collapsed")
+                st.caption("Supported: GPay, PhonePe, Paytm, BHIM, Amazon Pay")
+                if st.form_submit_button(
+                        f"Pay ₹{total:,} via UPI →", type="primary", use_container_width=True):
+                    if not upi_id or "@" not in upi_id:
+                        st.error("Please enter a valid UPI ID (e.g. name@okaxis)")
+                    else:
+                        _process_payment(plan, method, total)
+
+        elif method == "💳 Debit / Credit Card":
+            with st.form("card_form"):
+                st.markdown("**Card Details**")
+                card_no  = st.text_input("Card Number", placeholder="•••• •••• •••• ••••", max_chars=19)
+                cc1, cc2 = st.columns(2)
+                with cc1:
+                    expiry = st.text_input("Expiry (MM/YY)", placeholder="MM/YY", max_chars=5)
+                with cc2:
+                    cvv = st.text_input("CVV", placeholder="•••", max_chars=4, type="password")
+                card_name = st.text_input("Name on Card", placeholder="As printed on card")
+                if st.form_submit_button(
+                        f"Pay ₹{total:,} →", type="primary", use_container_width=True):
+                    if not card_no or len(card_no.replace(" ", "")) < 15:
+                        st.error("Please enter a valid card number.")
+                    elif not expiry or not cvv or not card_name:
+                        st.error("Please fill all card details.")
+                    else:
+                        _process_payment(plan, method, total)
+
+        else:  # Net Banking
+            with st.form("nb_form"):
+                st.markdown("**Select Your Bank**")
+                banks = ["State Bank of India", "HDFC Bank", "ICICI Bank", "Axis Bank",
+                         "Kotak Mahindra Bank", "Punjab National Bank", "Bank of Baroda",
+                         "Canara Bank", "IndusInd Bank", "Yes Bank", "Other"]
+                bank = st.selectbox("Bank", banks, label_visibility="collapsed")
+                if st.form_submit_button(
+                        f"Proceed to {bank} →", type="primary", use_container_width=True):
+                    _process_payment(plan, method, total)
+
+    # Back button
+    st.write("")
+    if st.button("← Back to Application", use_container_width=False):
+        st.session_state["payment_step"] = "application"
+        st.rerun()
+
+
+def _process_payment(plan: dict, method: str, total: int):
+    import random, time
+    with st.spinner("🔒 Processing payment securely…"):
+        time.sleep(2)
+    policy_no = f"{plan['insurer'][:4].upper().replace(' ','')}-{random.randint(100000,999999)}-2024"
+    st.session_state["payment_step"]  = "success"
+    st.session_state["payment_policy_no"] = policy_no
+    st.session_state["payment_method_used"] = method
+    st.session_state["payment_amount"] = total
+    st.rerun()
+
+
+def render_payment_success(plan: dict):
+    policy_no = st.session_state.get("payment_policy_no", "BB-XXXXXX-2024")
+    method    = st.session_state.get("payment_method_used", "UPI")
+    amount    = st.session_state.get("payment_amount", plan["premium_monthly"])
+
+    st.markdown("---")
+    st.balloons()
+
+    st.markdown(f"""
+    <div style="text-align:center;padding:40px 20px;background:linear-gradient(135deg,#0d3b6622,#27ae6022);
+                border:2px solid #27ae60;border-radius:16px;margin-bottom:20px;">
+        <div style="font-size:4rem">✅</div>
+        <h2 style="color:#27ae60;margin:10px 0">Payment Successful!</h2>
+        <p style="font-size:1.05rem;margin:4px 0">Your policy is now <strong>active</strong>.</p>
+        <p style="font-size:0.9rem;color:#888;margin:4px 0">A confirmation has been sent to your registered email & mobile.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(f"""
+        <div style="background:#f8fafc;border:1px solid #e0e7ef;border-radius:10px;padding:16px;text-align:center;color:#1a2a3a;">
+            <div style="font-size:0.8rem;color:#888;margin-bottom:4px">POLICY NUMBER</div>
+            <div style="font-weight:700;font-size:0.95rem;color:#1a7abf">{policy_no}</div>
+        </div>""", unsafe_allow_html=True)
+    with c2:
+        st.markdown(f"""
+        <div style="background:#f8fafc;border:1px solid #e0e7ef;border-radius:10px;padding:16px;text-align:center;color:#1a2a3a;">
+            <div style="font-size:0.8rem;color:#888;margin-bottom:4px">AMOUNT PAID</div>
+            <div style="font-weight:700;font-size:0.95rem;color:#27ae60">₹{amount:,}/month</div>
+        </div>""", unsafe_allow_html=True)
+    with c3:
+        st.markdown(f"""
+        <div style="background:#f8fafc;border:1px solid #e0e7ef;border-radius:10px;padding:16px;text-align:center;color:#1a2a3a;">
+            <div style="font-size:0.8rem;color:#888;margin-bottom:4px">PAID VIA</div>
+            <div style="font-weight:700;font-size:0.95rem">{method.split()[1] if ' ' in method else method}</div>
+        </div>""", unsafe_allow_html=True)
+
     st.write("")
 
-    prefill = st.session_state.prefill_data
-    flags = st.session_state.flags
-    riders = st.session_state.riders
+    # Policy summary card
+    st.markdown(f"""
+    <div style="background:#f8fafc;border:1px solid #e0e7ef;border-radius:10px;padding:18px;color:#1a2a3a;margin-bottom:16px;">
+        <div style="font-weight:700;margin-bottom:10px">📋 Policy Summary</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.9rem;">
+            <div><span style="color:#888">Plan:</span> <strong>{plan['name']}</strong></div>
+            <div><span style="color:#888">Insurer:</span> <strong>{plan['insurer']}</strong></div>
+            <div><span style="color:#888">Sum Insured:</span> <strong>{plan.get('sum_insured_default','—')}</strong></div>
+            <div><span style="color:#888">Claim Ratio:</span> <strong style="color:#27ae60">{plan.get('claim_settlement_ratio','—')}%</strong></div>
+            <div><span style="color:#888">Policy Start:</span> <strong>Immediate</strong></div>
+            <div><span style="color:#888">Renewal Due:</span> <strong>1 Year</strong></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    if flags:
-        st.markdown("#### ⚠️ Answer These Carefully")
-        for flag in flags:
-            lvl = flag.get("level", "green")
-            icon = "🔴" if lvl == "red" else "🟡" if lvl == "yellow" else "🟢"
-            st.markdown(
-                f'<div class="flag-{lvl}">{icon} <strong>{flag.get("field","").replace("_"," ").title()}</strong>'
-                f'<br><small>{flag.get("guidance","")}</small></div>',
-                unsafe_allow_html=True)
+    # Download policy summary
+    policy_text = f"""BIMA BUDDY — POLICY CONFIRMATION
+================================
+Policy Number : {policy_no}
+Plan          : {plan['name']}
+Insurer       : {plan['insurer']}
+Sum Insured   : {plan.get('sum_insured_default','—')}
+Monthly Premium: ₹{amount:,}
+Payment Method : {method}
+Status        : ACTIVE
+Issue Date    : {__import__('datetime').date.today().strftime('%d %B %Y')}
+Renewal Date  : {(__import__('datetime').date.today().replace(year=__import__('datetime').date.today().year+1)).strftime('%d %B %Y')}
 
-    if riders:
-        st.markdown("#### 💊 Recommended Riders")
-        cols = st.columns(len(riders))
-        for i, rider in enumerate(riders):
-            cost = rider.get("monthly_cost", "")
-            cost_str = f"₹{cost:,}/mo" if isinstance(cost, (int, float)) else str(cost)
-            with cols[i]:
-                st.info(f"**{rider.get('name','')}**\n\n{cost_str}\n\n{rider.get('why','')}")
+Claim Settlement Ratio : {plan.get('claim_settlement_ratio','—')}%
+Network Hospitals      : {plan.get('network_hospitals', '—'):,}+
 
-    with st.form("insurance_application_form"):
-        st.markdown("**Personal Details**")
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.text_input("Full Name *", value=prefill.get("full_name") or "")
-            st.text_input("Age *", value=str(prefill.get("age") or ""))
-            st.text_input("City *", value=prefill.get("city") or "")
-        with c2:
-            gender_idx = 1 if (prefill.get("gender") or "").lower().startswith("f") else 0
-            st.selectbox("Gender *", ["Male", "Female", "Other"], index=gender_idx)
-            st.text_input("Occupation *", value=prefill.get("occupation") or "")
-            st.text_input("Annual Income (₹) *", value=prefill.get("annual_income") or "")
-        with c3:
-            st.text_input("Mobile Number *", placeholder="10-digit mobile")
-            st.text_input("Email Address *", placeholder="your@email.com")
-            st.text_input("PAN Number", placeholder="ABCDE1234F")
+For claims: Call 1800-XXX-XXXX or visit the insurer's website.
+For grievances: IRDAI IGMS portal — www.igms.irda.gov.in
 
-        st.markdown("**Health Declaration**")
-        h1, h2 = st.columns(2)
-        with h1:
-            st.radio("Tobacco/Smoking use?", ["No", "Yes", "Quit > 12 months ago"])
-            st.radio("Hospitalized in last 3 years?", ["No", "Yes"])
-        with h2:
-            st.radio("Ever had an insurance application rejected?", ["No", "Yes"])
-            st.radio("Hazardous occupation?", ["No", "Yes"])
-
-        st.text_area(
-            "Pre-existing Conditions (declare ALL truthfully) *",
-            value=prefill.get("existing_conditions") or "",
-            placeholder="e.g. Type 2 Diabetes diagnosed 2018, on Metformin. OR: None",
-            help="🔴 Non-disclosure is the #1 cause of claim rejection.", height=90)
-
-        st.markdown("**Nominee Details**")
-        n1, n2 = st.columns(2)
-        with n1:
-            st.text_input("Nominee Full Name *")
-        with n2:
-            st.selectbox("Relationship *", ["Spouse", "Parent", "Child", "Sibling", "Other"])
-
-        st.markdown(f"**Selected:** {plan['name']} · ₹{plan['premium_monthly']:,}/month")
-        agree = st.checkbox(
-            "I declare that all information provided is true and accurate. "
-            "Non-disclosure may result in claim rejection or policy cancellation.")
-
-        submitted = st.form_submit_button(
-            f"Proceed to Payment — ₹{plan['premium_monthly']:,}/month →",
-            type="primary", use_container_width=True)
-
-        if submitted:
-            if not agree:
-                st.error("⚠️ Please check the declaration box above before proceeding.")
-            else:
-                st.session_state["payment_ready"] = plan["plan_id"]
-
-    # ── Payment redirect (outside form so link_button renders properly) ────────
-    if st.session_state.get("payment_ready") == plan["plan_id"]:
-        insurer_url = INSURER_URLS.get(plan["plan_id"], "https://www.policybazaar.com")
-        ref = f"BB-{plan['plan_id'].upper()[:8]}-2024"
-        st.success(f"🎉 Application complete! Your Bima Buddy reference: **{ref}**")
-        st.balloons()
-        st.info(
-            f"You'll land directly on the **{plan['name']}** product page. "
-            f"Click **'Buy Now'** or **'Get Quote'** on that page to proceed to payment. "
-            f"Keep your reference **{ref}** handy — use it if you contact support.\n\n"
-            f"⚠️ *Note: The insurer's form will ask for the same details you've filled above — "
-            f"your answers are ready to copy across.*"
-        )
-        st.link_button(
-            f"🔗 Go to {plan['name']} — {plan['insurer']} →",
-            url=insurer_url,
+This is a simulated confirmation generated by Bima Buddy.
+"""
+    dl1, dl2 = st.columns(2)
+    with dl1:
+        st.download_button(
+            "📥 Download Policy Summary",
+            data=policy_text,
+            file_name=f"policy_{policy_no}.txt",
+            mime="text/plain",
             type="primary",
             use_container_width=True,
         )
+    with dl2:
+        if st.button("💬 Back to Chat", use_container_width=True):
+            st.session_state["payment_step"] = "application"
+            st.session_state["payment_policy_no"] = None
+            st.rerun()
 
 
 # ── Main chat ──────────────────────────────────────────────────────────────────
